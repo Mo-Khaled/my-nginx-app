@@ -4,16 +4,12 @@ pipeline {
     environment {
         DOCKER_IMAGE = "mo4222/my-nginx-app:latest"
         DOCKER_CONTAINER = "nginx-container"
-        EC2_USER = "ubuntu"
+        EC2_USER = "ubuntu" 
         EC2_HOST = "13.217.201.72"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/mo4222/my-nginx-app.git'
-            }
-        }
+
 
         stage('Docker Build & Push') {
             steps {
@@ -39,7 +35,7 @@ pipeline {
                                 docker stop $DOCKER_CONTAINER || true &&
                                 docker rm $DOCKER_CONTAINER || true &&
                                 docker pull $DOCKER_IMAGE &&
-                                docker run -d --name $DOCKER_CONTAINER -p 80:80 $DOCKER_IMAGE
+                                docker run -d --name $DOCKER_CONTAINER -p 81:81 $DOCKER_IMAGE
                             '
                         """
                     }

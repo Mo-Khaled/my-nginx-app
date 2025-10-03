@@ -6,7 +6,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
 
         // EC2 details
-        EC2_USER = "my-nginx-app"
+        EC2_USER = "ubuntu"
         EC2_HOST = "13.217.201.72"
         PEM_KEY_PATH = "/var/lib/jenkins/my-nginx-app.pem"
     }

@@ -9,13 +9,16 @@ pipeline {
         EC2_USER = "ubuntu"
         EC2_HOST = "13.217.201.72"
         PEM_KEY_PATH = "/var/lib/jenkins/my-nginx-app.pem"
+
+        // Docker image
+        DOCKER_IMAGE = "mo4222/my-nginx-app:latest"
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                sh 'docker build -t mo4222/my-nginx-app:latest .'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
@@ -29,22 +32,23 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 echo "Pushing image to DockerHub..."
-                sh 'docker push mo4222/my-nginx-app:latest'
+                sh 'docker push $DOCKER_IMAGE'
             }
         }
 
         stage('Deploy to EC2') {
             steps {
                 echo "Deploying to EC2..."
-                ssh -o StrictHostKeyChecking=no -i ${PEM_KEY_PATH} ${EC2_USER}@${EC2_HOST} """
-                    echo 'Connected to EC2';
-                    docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD};
-                    sudo docker pull ${DOCKER_IMAGE};
-                    sudo docker stop nginx-container || true;
-                    sudo docker rm nginx-container || true;
-                    sudo docker run -d -p 8080:80 --name nginx-container ${DOCKER_IMAGE};
+                sh """
+                    ssh -o StrictHostKeyChecking=no -i ${PEM_KEY_PATH} ${EC2_USER}@${EC2_HOST} '
+                        echo "Connected to EC2";
+                        echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin;
+                        sudo docker pull ${DOCKER_IMAGE};
+                        sudo docker stop nginx-container || true;
+                        sudo docker rm nginx-container || true;
+                        sudo docker run -d -p 8080:80 --name nginx-container ${DOCKER_IMAGE};
+                    '
                 """
-
             }
         }
     }

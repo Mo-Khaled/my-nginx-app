@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // Add in Jenkins Credentials Manager
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKERHUB_USER = "mo4222"
         IMAGE_NAME = "my-nginx-app"
         IMAGE_TAG = "v1"
-        EC2_USER = "ec2-user"   // change if Ubuntu instance → "ubuntu"
-        EC2_HOST = "YOUR_EC2_PUBLIC_IP" // replace with your instance public IP
-        PEM_KEY_PATH = "/var/lib/jenkins/my-nginx-app.pem" // make sure Jenkins has access
+        EC2_USER = "my-nginx-app"  
+        EC2_HOST = "13.217.201.72" 
+        PEM_KEY_PATH = "/var/lib/jenkins/my-nginx-app.pem"
     }
 
     stages {

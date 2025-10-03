@@ -41,14 +41,14 @@ pipeline {
                 echo "Deploying to EC2..."
                 sh """
                     ssh -o StrictHostKeyChecking=no -i ${PEM_KEY_PATH} ${EC2_USER}@${EC2_HOST} '
-                        echo "Connected to EC2";
-                        echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin;
+                        echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin;
                         sudo docker pull ${DOCKER_IMAGE};
                         sudo docker stop nginx-container || true;
                         sudo docker rm nginx-container || true;
                         sudo docker run -d -p 8080:80 --name nginx-container ${DOCKER_IMAGE};
                     '
                 """
+
             }
         }
     }

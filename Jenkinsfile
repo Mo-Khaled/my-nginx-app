@@ -36,16 +36,15 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 echo "Deploying to EC2..."
-                sh '''
-                    ssh -o StrictHostKeyChecking=no -i $PEM_KEY_PATH $EC2_USER@$EC2_HOST "
-                        echo 'Connected to EC2';
-                        docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW;
-                        docker pull mo4222/my-nginx-app:latest;
-                        docker stop nginx-container || true;
-                        docker rm nginx-container || true;
-                        docker run -d -p 8080:80 --name nginx-container mo4222/my-nginx-app:latest
-                    "
-                '''
+                ssh -o StrictHostKeyChecking=no -i ${PEM_KEY_PATH} ${EC2_USER}@${EC2_HOST} """
+                    echo 'Connected to EC2';
+                    docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD};
+                    sudo docker pull ${DOCKER_IMAGE};
+                    sudo docker stop nginx-container || true;
+                    sudo docker rm nginx-container || true;
+                    sudo docker run -d -p 8080:80 --name nginx-container ${DOCKER_IMAGE};
+                """
+
             }
         }
     }
